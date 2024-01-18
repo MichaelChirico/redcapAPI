@@ -276,6 +276,64 @@ test_that(
 )
 
 test_that(
+  "Return an error if instrument is not an instrument in the project", 
+  {
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               instrument = 123), 
+                 "Variable 'instrument': Must be of type 'character'")
+    
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               instrument = "not an instrument"), 
+                 "Variable 'instrument': Must be a subset of")
+  }
+)
+
+test_that(
+  "Return an error if event is not an event in the project", 
+  {
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               event = 123), 
+                 "Variable 'event': Must be of type 'character'")
+    
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               event = "not an event"), 
+                 "Variable 'event': Must be a subset of")
+  }
+)
+
+test_that(
+  "Return an error if repeat_instance is not integerish", 
+  {
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               repeat_instance = 1.23), 
+                 "Variable 'repeat_instance': Must be of type 'integerish'")
+    
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               repeat_instance = "123"), 
+                 "Variable 'repeat_instance': Must be of type 'integerish'")
+  }
+)
+
+test_that(
+  "Return an error if delete_logging is not logical(1)", 
+  {
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               delete_logging = "TRUE"))
+    
+    expect_error(deleteRecords(rcon, 
+                               records = 1, 
+                               delete_logging = c(TRUE, FALSE)))
+  }
+)
+
+test_that(
   "Validate error_handling, config, api_param", 
   {
     local_reproducible_output(width = 200)
