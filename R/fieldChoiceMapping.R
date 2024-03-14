@@ -44,29 +44,10 @@ fieldChoiceMapping.character <- function(object,
   }
   
   mapping <- unlist(strsplit(object, "[|]"))
-  #split on only the first comma. This allows commas to remain in the field label.
-  # if no commas the code is likely from a legacy project
-  if (!any(grepl(",", mapping))) {
-    matrix <- matrix(nrow = length(mapping), ncol = 2,
-                            dimnames = list(NULL, c("choice_value", "choice_label")))
-
-    matrix[, "choice_value"] <- trimws(mapping)
-    matrix[, "choice_label"] <- trimws(mapping)
-
-    mapping <- matrix
-    return(mapping)
-
-  } else {
-    mapping <- regmatches(mapping, 
-                          regexec("([^,]*),(.*)", 
-                                  mapping, 
-                                  perl=TRUE))
-    mapping <- do.call("rbind", mapping)
-    mapping <- trimws(mapping[, -1, drop=FALSE]) # the first column is the original string. 
-
-    colnames(mapping) <- c("choice_value", "choice_label")
-    return(mapping)
-  }
+  
+  mapping <- lapply(mapping, 
+                    .fieldChoiceMapping_choiceMatrix)
+  do.call("rbind", mapping)
 }
 
 #' @rdname fieldChoiceMapping
@@ -106,4 +87,33 @@ fieldChoiceMapping.redcapApiConnection <- function(object,
   field_choice <- MetaData$select_choices_or_calculations[MetaData$field_name == field_name]
   
   fieldChoiceMapping(field_choice)
+}
+
+#####################################################################
+# Unexported                                                     ####
+
+.fieldChoiceMapping_choiceMatrix <- function(mapping){
+  #split on only the first comma. This allows commas to remain in the field label.
+  # if no commas the code is likely from a legacy project
+  if (!grepl(",", mapping)) {
+    matrix <- matrix(nrow = length(mapping), ncol = 2,
+                     dimnames = list(NULL, c("choice_value", "choice_label")))
+    
+    matrix[, "choice_value"] <- trimws(mapping)
+    matrix[, "choice_label"] <- trimws(mapping)
+    
+    mapping <- matrix
+    return(mapping)
+    
+  } else {
+    mapping <- regmatches(mapping, 
+                          regexec("([^,]*),(.*)", 
+                                  mapping, 
+                                  perl=TRUE))
+    mapping <- do.call("rbind", mapping)
+    mapping <- trimws(mapping[, -1, drop=FALSE]) # the first column is the original string. 
+    
+    colnames(mapping) <- c("choice_value", "choice_label")
+    return(mapping)
+  }
 }

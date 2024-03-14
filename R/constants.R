@@ -101,17 +101,37 @@ REGEX_MULT_CHOICE_STRICT <- "^[^\\|]+,[^\\|]*(?:\\|[^\\|]+,[^\\|]*)*$"
 # REGEX_MULT_CHOICE - matches acceptable formats for multiple choice options, 
 # to include formats that use only the label. See Issue 145. 
 # It's a good idea to trim whitespace before using this. 
-# Explanation - uses the same pattern as REGEX_MULT_CHOICE_STRICT and also includes the following
-#               for matching shorthand multiple choice fields.
+# Explanation - 
 #                       ^ : Start of string
-#           (?:[^|,]+\|)+ : Look for a repeating pattern of character, pipe, character, where
-#                           the last in the sequence does not end with a pipe and characters 
-#                           do not include commas
+#
+#                 [^\\|]+ : A sequence of characters that does not start with a pipe
+#                       , : A literal comma
+#                  [^\\|] : A sequence of characters that does not end with a pipe
+#         [^\\|]+,[^\\|]* : The composition of the expected strict format. Specifically,
+#                           characters, comma, characters. The * at the end makes it
+#                           non greedy, meaning it will match if there are no characters
+#                           after the comma.
+#
 #                  [^|,]+ : any number of characters, but the sequence may not 
 #                           include a pipe or comma
+#                  [^\\|] : A set of characters that does not end in a pipe
+#           [^|,]+[^\\|]* : The composition of the legacy unstrict format. In earlier
+#                           versions of REDCap, choices could be denoted to have the same
+#                           code and label with the syntax 1|2|3
+# 
+#              (?:\\|...) : Match a repeating pattern of pipe, characters, up to the next pipe
+#
 #                       $ : end of string
+# 
+# Now let's put these pieces together 
+# ([^\\|]+,[^\\|]*|[^|,]+[^\\|]*) : the regex to match either the strict or the non-strict pattern
+#                           This will appear twice.  First, we will use it to catch the
+#                           first instance, then we will put it in the 
+#                           (?:\\|...) block to catch any remaining instances.
+#                           The * at the end makes it non-greedy so that it will match even if
+#                           there is only one choice defined.
 
-REGEX_MULT_CHOICE <- "^(^[^\\|]+,[^\\|]*(?:\\|[^\\|]+,[^\\|]*)*$|^(?:[^|,]+\\|)+[^|,]+$)$"
+REGEX_MULT_CHOICE <- "^([^\\|]+,[^\\|]*|[^|,]+[^\\|]*)(?:\\|([^\\|]+,[^\\|]*|[^|,]+[^\\|]*))*$"
                      
 # REGEX_SLIDER - matches acceptable definition of slider bar settings
 # Specifically, low point | midpoint | high point

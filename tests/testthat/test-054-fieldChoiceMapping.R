@@ -9,14 +9,15 @@ test_that(
   }
 )
 
-test_that(
-  "REGEX_MULT_CHOICE accepts legacy and current but not mixed",
-  {
-    expect_true(grepl(REGEX_MULT_CHOICE, "x | y | z"))
-    expect_true(grepl(REGEX_MULT_CHOICE, "1, x | 2, y | 3, z"))
-    expect_false(grepl(REGEX_MULT_CHOICE, "x | 2, y | z"))  
-  }
-)
+# With Issue #344, we found we need to accept both formats
+# test_that(
+#   "REGEX_MULT_CHOICE accepts legacy and current but not mixed",
+#   {
+#     expect_true(grepl(REGEX_MULT_CHOICE, "x | y | z"))
+#     expect_true(grepl(REGEX_MULT_CHOICE, "1, x | 2, y | 3, z"))
+#     expect_false(grepl(REGEX_MULT_CHOICE, "x | 2, y | z"))  
+#   }
+# )
 
 test_that(
   "Return an error if object is neither character nor redcapApiConnection", 
@@ -39,17 +40,19 @@ test_that(
   }
 )
 
-test_that(
-  "Return an error if the string provided doesn't have an approximate format", 
-  {
-    local_reproducible_output(width = 200)
-    # To pass this test, the string must have at least one pipe (|)
-    expect_error(fieldChoiceMapping("This only has, a comma", "test1"), NA)
-    expect_error(fieldChoiceMapping("1,", "testNULL"), NA) # Allow for NULL choice
-    expect_error(fieldChoiceMapping("This only has | a pipe", "test2"), NA) # allowing only pipes
-    expect_error(fieldChoiceMapping("This has neither", "test3"), "'test3' choice string does not appear to be formatted for choices.")
-  }
-)
+# Issue #344, in order to permit a mix of legacy and strict formats, we had to abandon 
+# a lot of assumptions about what these strings should look like.
+# test_that(
+#   "Return an error if the string provided doesn't have an approximate format", 
+#   {
+#     local_reproducible_output(width = 200)
+#     # To pass this test, the string must have at least one pipe (|)
+#     expect_error(fieldChoiceMapping("This only has, a comma", "test1"), NA)
+#     expect_error(fieldChoiceMapping("1,", "testNULL"), NA) # Allow for NULL choice
+#     expect_error(fieldChoiceMapping("This only has | a pipe", "test2"), NA) # allowing only pipes
+#     expect_error(fieldChoiceMapping("This has neither", "test3"), "'test3' choice string does not appear to be formatted for choices.")
+#   }
+# )
 
 test_that(
   "Return an error if field_name is not in the metadata", 
