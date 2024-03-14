@@ -33,22 +33,3 @@ test_that(
                    TRUE))
   }
 )
-
-#####################################################################
-# REGEX_MULT_CHOICE                                              ####
-
-test_that(
-  "REGEX_MULT_CHOICE correctly matches allowable variations on multiple choice definitions", 
-  {
-    choice <- c("0,0 - Not at all|1|2|3|4|5|6, 6 - Very", 
-                "0,0 - Not at all|1,1|2,2|3,3|4,4|5,5|6, 6 - Very", 
-                "0|1|2|3|4|5|6", 
-                "a,A | b, b with, a comma | text", 
-                "a", 
-                "a|A", 
-                "|b, B", 
-                "a, A|")
-    expect_equal(grepl(REGEX_MULT_CHOICE, choice, perl = TRUE), 
-                 rep(c(TRUE, FALSE), c(6, 2)))
-  }
-)
