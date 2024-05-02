@@ -1,6 +1,6 @@
 test:
   stage: test
-  image: rocker/r-ver:latest
+  image: rocker/r-ver:4.3
   tags:
     - staging
   only:
