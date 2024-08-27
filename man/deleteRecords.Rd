@@ -40,11 +40,17 @@ provided, the specified records will be deleted from all arms in which
 they exist. Whereas, if \code{arm} is provided, they will only be deleted from
 the specified arm.}
 
-\item{instrument}{\code{character(1)} Optional instrument to delete records from.}
+\item{instrument}{\code{character(1)} Optional instrument to delete records from.
+Needs to be the unique instrument name. If a value is given for this
+argument in a longitudinal project, the \code{event} argument becomes required.}
 
-\item{event}{\code{character(1)} Optional event to delete records from.}
+\item{event}{\code{character(1)} Optional event to delete records from. If
+the project is longitudinal and \code{instrument} has a value, then this
+argument is required.}
 
-\item{repeat_instance}{\code{numeric(1)} optional repeat instance to delete records from.}
+\item{repeat_instance}{\code{numeric(1)} optional repeat instance to delete records from.
+If the project has repeating instruments/events, it will remove only the
+data for that repeating instance.}
 
 \item{delete_logging}{\code{logical}. Should the logging for this record be
 delete as well. Default to FALSE.}
@@ -56,6 +62,14 @@ delete as well. Default to FALSE.}
 }
 \description{
 These methods enable the user to delete records from a project.
+}
+\details{
+While the arguments \code{instrument}, \code{event}, and \code{repeat_instance}
+allow the user to delete specific elements of a record, it has been
+observed that targeted deletes are best accomplished by providing all
+of those arguments. Importantly, it has been observed that omitting one
+or more of those arguments may result in the deletion of the entire
+record.
 }
 \examples{
 \dontrun{

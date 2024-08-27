@@ -15,10 +15,23 @@
 #'   they exist. Whereas, if `arm` is provided, they will only be deleted from 
 #'   the specified arm.
 #' @param instrument `character(1)` Optional instrument to delete records from.
-#' @param event `character(1)` Optional event to delete records from.
+#'   Needs to be the unique instrument name. If a value is given for this 
+#'   argument in a longitudinal project, the `event` argument becomes required.
+#' @param event `character(1)` Optional event to delete records from. If
+#'   the project is longitudinal and `instrument` has a value, then this 
+#'   argument is required.
 #' @param repeat_instance `numeric(1)` optional repeat instance to delete records from.
+#'   If the project has repeating instruments/events, it will remove only the
+#'   data for that repeating instance.
 #' @param delete_logging `logical`. Should the logging for this record be
 #'   delete as well. Default to FALSE. 
+#'   
+#' @details While the arguments `instrument`, `event`, and `repeat_instance`
+#'   allow the user to delete specific elements of a record, it has been 
+#'   observed that targeted deletes are best accomplished by providing all 
+#'   of those arguments. Importantly, it has been observed that omitting one
+#'   or more of those arguments may result in the deletion of the entire 
+#'   record.
 #' 
 #' @return
 #' `deleteRecords` invisibly returns a character value giving the number of records deleted.
